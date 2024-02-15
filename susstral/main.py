@@ -4,12 +4,12 @@ import discord
 from .passmanager import PassManager
 
 pm: PassManager = PassManager()
-client_key: str = pm.get_password("discord/key")
+client_key: str = pm.get_password("discord/token")
 
-intents = discord.Intents.default()
+intents: discord.flags.Intents = discord.Intents.default()
 intents.message_content = True
 
-client = discord.Client(intents=intents)
+client: discord.Client = discord.Client(intents=intents)
 
 
 @client.event
