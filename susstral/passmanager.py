@@ -33,7 +33,7 @@ class PassManager:
         )
         return output.decode("utf-8").strip()
 
-    def update_password(self, name, new_password):
+    def update_password(self, name: str, new_password: str) -> str:
         """
         This method updates an existing password in the password store.
 
@@ -45,26 +45,21 @@ class PassManager:
         new_password (str): The new password to be set.
 
         Returns:
-        str: The output from the 'pass' command or an error message if the command fails.
+        str: The output from the 'pass' command or raise error message if the command fails.
         """
-        try:
-            process = subprocess.Popen(
-                [self.pass_command, "insert", "--force", name],
-                stdin=subprocess.PIPE,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-            )
-            process.communicate(
-                input=f"{new_password}\n{new_password}\n".encode("utf-8")
-            )
-            if process.returncode == 0:
-                return "Password updated successfully"
-            else:
-                return "Error updating password"
-        except Exception as e:
-            return f"Error: {str(e)}"
+        process = subprocess.Popen(
+            [self.pass_command, "insert", "--force", name],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+        process.communicate(input=f"{new_password}\n{new_password}\n".encode("utf-8"))
+        if process.returncode != 0:
+            raise Exception("Error updating password")
 
-    def add_password(self, name, password):
+        return "Password updated successfully"
+
+    def add_password(self, name: str, password: str) -> str:
         """
         This method adds a new password to the password store.
 
@@ -73,24 +68,21 @@ class PassManager:
         password (str): The password to be added.
 
         Returns:
-        str: A message indicating the success or failure of the operation.
+        str: A message indicating the success raises exception on failure of the operation.
         """
-        try:
-            process = subprocess.Popen(
-                [self.pass_command, "insert", "--force", name],
-                stdin=subprocess.PIPE,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-            )
-            process.communicate(input=f"{password}\n{password}\n".encode("utf-8"))
-            if process.returncode == 0:
-                return "Password added successfully"
-            else:
-                return "Error adding password"
-        except Exception as e:
-            return f"Error: {str(e)}"
+        process = subprocess.Popen(
+            [self.pass_command, "insert", "--force", name],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+        process.communicate(input=f"{password}\n{password}\n".encode("utf-8"))
+        if process.returncode != 0:
+            raise Exception("Error adding password")
 
-    def delete_password(self, name):
+        return "Password added successfully"
+
+    def delete_password(self, name: str) -> str:
         """
         This method deletes a password from the password store.
 
@@ -101,15 +93,12 @@ class PassManager:
         name (str): The name associated with the password to be deleted.
 
         Returns:
-        str: The output from the 'pass' command or an error message if the command fails.
+        str: The output from the 'pass' command or raises an CalledProcessError if the command fails.
         """
-        try:
-            output = subprocess.check_output(
-                [self.pass_command, "rm", "--force", name], stderr=subprocess.STDOUT
-            )
-            return output.decode("utf-8").strip()
-        except subprocess.CalledProcessError as e:
-            return f"Error: {e.output.decode('utf-8').strip()}"
+        output = subprocess.check_output(
+            [self.pass_command, "rm", "--force", name], stderr=subprocess.STDOUT
+        )
+        return output.decode("utf-8").strip()
 
 
 # Example usage
