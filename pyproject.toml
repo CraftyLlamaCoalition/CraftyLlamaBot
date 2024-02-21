@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "susstral"
+name = "CraftyLlamaBot"
 version = "0.1.0"
-description = ""
+description = "Discord bot to for the CraftyLlamaCoalition."
 authors = ["Kenny Le"]
 readme = "README.md"
 

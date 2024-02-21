@@ -1,2 +1,2 @@
-# susstral
-Discord bot based with local LLM
+# CraftyLlamaBot
+Discord bot created to interact with local LLMs and further the CraftyLlamaCoaliton agenda.
