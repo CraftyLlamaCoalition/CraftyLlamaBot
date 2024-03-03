@@ -1,37 +1,30 @@
-"""
-This module provides a class `PassManager` for managing passwords using the 'pass' command line utility.
-
-The `PassManager` class provides methods for adding, updating, retrieving, and deleting passwords.
-
-Example usage:
-    pm = PassManager()
-    print(pm.add_password('new_pass', 'mypassword'))  # Add a new password
-    print(pm.get_password('new_pass'))  # Get password for 'example'
-    print(pm.delete_password('new_pass'))  # Delete the password
-"""
-
 import subprocess
+from typing import Optional
 
 
 class PassManager:
     def __init__(self):
         self.pass_command = "pass"
 
-    def get_password(self, name: str) -> str:
+    def get_password(self, name: str) -> Optional[str]:
         """
         This method retrieves the password for a given name using a subprocess command.
-        If the subprocess command fails, it rasies a CalledProcessError.
+        If the subprocess command fails, it returns None.
 
         Parameters:
         name (str): The name for which the password is to be retrieved.
 
         Returns:
-        str: The password if the subprocess command is successful
+        str: The password if the subprocess command is successful, None otherwise.
         """
-        output = subprocess.check_output(
-            [self.pass_command, "show", name], stderr=subprocess.STDOUT
-        )
-        return output.decode("utf-8").strip()
+
+        try:
+            output = subprocess.check_output(
+                [self.pass_command, "show", name], stderr=subprocess.STDOUT
+            )
+            return output.decode("utf-8").strip()
+        except subprocess.CalledProcessError:
+            return None
 
     def update_password(self, name: str, new_password: str) -> str:
         """
@@ -106,4 +99,7 @@ if __name__ == "__main__":
     pm = PassManager()
     print(pm.add_password("new_pass", "mypassword"))  # Add a new password
     print(pm.get_password("new_pass"))  # Get password for 'example'
+    print(
+        pm.update_password("new_pass", "updated_password")
+    )  # Get password for 'example'
     print(pm.delete_password("new_pass"))  # Delete the password
