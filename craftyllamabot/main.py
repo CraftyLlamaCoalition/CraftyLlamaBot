@@ -1,10 +1,12 @@
-# This example requires the 'message_content' intent.
 import discord
 
+from .logger_config import logger
 from .passmanager import PassManager
 
 pm: PassManager = PassManager()
-client_key: str = pm.get_password("discord/token")
+client_key: str | None = pm.get_password("discord/token")
+if not client_key:
+    raise ValueError("Discord token not found in passmanager.")
 
 intents: discord.flags.Intents = discord.Intents.default()
 intents.message_content = True
@@ -17,7 +19,7 @@ async def on_ready() -> None:
     """
     This function is called when the bot has successfully connected to the server.
     """
-    print(f"We have logged in as {client.user}")
+    logger.info(f"We have logged in as {client.user}")
 
 
 @client.event
@@ -32,8 +34,10 @@ async def on_message(message: discord.Message) -> None:
     if message.author == client.user:
         return
 
-    if message.content.startswith("$hello"):
-        await message.channel.send("Hello!")
+    logger.info(f"Message from {message.author}: {message.content}")
+
+    if message.content.startswith("https://"):
+        logger.info("Message contains a link.")
 
 
 client.run(client_key)
