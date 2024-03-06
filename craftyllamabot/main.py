@@ -1,5 +1,6 @@
 import discord
 
+from .models import User, Message
 from .logger_config import logger
 from .settings import settings
 
@@ -34,6 +35,12 @@ async def on_message(message: discord.Message) -> None:
         return
 
     logger.info(f"Message from {message.author}: {message.content}")
+    user = User.select().where(User.username == message.author).first()
+    if not user:
+        logger.warn(f"User {message.author} not found in the database.")
+        return
+
+    Message.create(user=user, content=message.content)
 
     if message.content.startswith("https://"):
         logger.info("Message contains a link.")
